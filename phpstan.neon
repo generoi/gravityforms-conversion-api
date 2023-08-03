@@ -1,0 +1,16 @@
+includes:
+  - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+  level: 6
+  inferPrivatePropertyTypeFromConstructor: true
+  paths:
+    - src/
+
+  bootstrapFiles:
+    - test/stubs.php
+    - ../facebook-for-woocommerce/facebook-commerce-pixel-event.php
+    - ../facebook-for-woocommerce/facebook-for-woocommerce.php
+    - ../facebook-for-woocommerce/class-wc-facebookcommerce.php
+    - vendor/php-stubs/gravity-forms-stubs/gravity-forms-stubs.php
+    - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php

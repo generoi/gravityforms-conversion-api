@@ -1,65 +1,30 @@
 <?php
 
-namespace GeneroWP\PluginBoilerplate;
+namespace GeneroWP\GformConversionApi;
+
+use GFAddOn;
+use GFForms;
 
 class Plugin
 {
-    public $name = 'wp-plugin-boilerplate';
-    public $file;
-    public $path;
-    public $url;
+    protected static Plugin $instance;
 
-    protected static $instance;
-
-    public static function getInstance()
+    public static function getInstance(): self
     {
         if (!isset(self::$instance)) {
-            self::$instance = new static();
+            self::$instance = new self();
         }
         return self::$instance;
     }
 
     public function __construct()
     {
-        $this->file = realpath(__DIR__ . '/../wp-plugin-boilerplate.php');
-        $this->path = untrailingslashit(plugin_dir_path($this->file));
-        $this->url = untrailingslashit(plugin_dir_url($this->file));
-
-        add_action('init', [$this, 'loadTextdomain']);
-        add_action('wp_enqueue_scripts', [$this, 'registerAssets']);
-        add_action('wp_enqueue_scripts', [$this, 'enqueueAssets']);
+        add_action('gform_loaded', [$this, 'loadAddon']);
     }
 
-    public function registerAssets(): void
+    public function loadAddon(): void
     {
-        wp_register_script(
-            "{$this->name}/js",
-            "{$this->url}/dist/main.js",
-            [],
-            filemtime($this->path . '/dist/main.js')
-        );
-
-        wp_register_style(
-            "{$this->name}/css",
-            "{$this->url}/dist/main.css",
-            [],
-            filemtime($this->path . '/dist/main.css')
-        );
+        GFForms::include_feed_addon_framework();
+        GFAddOn::register(GformAddOn::class);
     }
-
-    public function enqueueAssets(): void
-    {
-        wp_enqueue_style("{$this->name}/css");
-        wp_enqueue_script("{$this->name}/js");
-    }
-
-    public function loadTextdomain(): void
-    {
-        load_plugin_textdomain(
-            $this->name,
-            false,
-            dirname(plugin_basename($this->file)) . '/languages'
-        );
-    }
-
 }
