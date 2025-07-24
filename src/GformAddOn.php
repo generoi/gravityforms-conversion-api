@@ -95,7 +95,7 @@ class GformAddOn extends GFFeedAddOn
     public function can_create_feed()
     {
         try {
-            $this->getIntegration();
+            Plugin::getInstance()->getIntegration();
             return true;
         } catch (Exception $e) {
             return false;
@@ -180,7 +180,7 @@ class GformAddOn extends GFFeedAddOn
         $this->log_debug(sprintf("%s(): Starting process: %s", __METHOD__, json_encode($event)));
 
         try {
-            $integration = $this->getIntegration();
+            $integration = Plugin::getInstance()->getIntegration();
             $eventData = $integration->sendEvent($event);
             if ($eventData !== null) {
                 $integration->injectEvent($eventData);
@@ -268,20 +268,5 @@ class GformAddOn extends GFFeedAddOn
         ];
 
         return $fields;
-    }
-
-    protected function getIntegration(): EventIntegration
-    {
-        $integrations = [
-            FacebookForWooCommerce::class,
-        ];
-        foreach ($integrations as $integrationClass) {
-            /** @var EventIntegration $integration */
-            $integration = new $integrationClass;
-            if ($integration->isActive()) {
-                return $integration;
-            }
-        }
-        throw new Exception('No integration plugin found. This plugin needs one to function.');
     }
 }
